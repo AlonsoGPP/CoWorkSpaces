@@ -14,6 +14,10 @@ class SpaceUnavailableError(DomainError):
     """El espacio no puede aceptar reservas."""
 
 
+class SpaceDeletionConflictError(DomainError):
+    """No se puede eliminar un espacio por dependencias existentes."""
+
+
 class OverlappingReservationError(DomainError):
     """Conflicto de reserva por solapamiento de horario."""
 

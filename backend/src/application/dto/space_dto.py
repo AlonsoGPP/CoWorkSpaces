@@ -14,6 +14,15 @@ class CreateSpaceInputDTO:
 
 
 @dataclass(frozen=True, slots=True)
+class UpdateSpaceInputDTO:
+    space_id: UUID
+    name: str
+    status: SpaceStatus
+    hourly_rate: Decimal
+    capacity: int
+
+
+@dataclass(frozen=True, slots=True)
 class SpaceOutputDTO:
     id: UUID
     name: str

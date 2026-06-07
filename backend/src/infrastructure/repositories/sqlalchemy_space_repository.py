@@ -1,10 +1,11 @@
 from uuid import UUID
 
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from domain.entities.space import Space
-from domain.exceptions import EntityNotFoundError
+from domain.exceptions import EntityNotFoundError, SpaceDeletionConflictError
 from infrastructure.db.models import SpaceModel
 
 
@@ -45,6 +46,22 @@ class SqlAlchemySpaceRepository:
         model.capacity = space.capacity
         self._session.flush()
         return self._to_domain(model)
+
+    def delete(self, space_id: UUID) -> None:
+        model = self._session.get(SpaceModel, space_id)
+        if model is None:
+            raise EntityNotFoundError("Espacio no encontrado")
+
+        self._session.delete(model)
+        try:
+            self._session.flush()
+        except IntegrityError as error:
+            sqlstate = getattr(getattr(error, "orig", None), "sqlstate", None)
+            if sqlstate == "23503":
+                raise SpaceDeletionConflictError(
+                    "No se puede eliminar el espacio porque tiene reservas asociadas"
+                ) from error
+            raise error
 
     @staticmethod
     def _to_domain(model: SpaceModel) -> Space:

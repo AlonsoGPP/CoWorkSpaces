@@ -13,6 +13,13 @@ class SpaceCreateRequest(BaseModel):
     capacity: int
 
 
+class SpaceUpdateRequest(BaseModel):
+    name: str
+    status: SpaceStatus
+    hourly_rate: Decimal
+    capacity: int
+
+
 class SpaceResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
