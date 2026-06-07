@@ -8,9 +8,15 @@ from application.dto.reservation_dto import (
 )
 from application.use_cases.cancel_reservation import CancelReservationUseCase
 from application.use_cases.create_reservation import CreateReservationUseCase
+from application.use_cases.get_reservation import GetReservationUseCase
+from application.use_cases.list_reservations_by_space import (
+    ListReservationsBySpaceUseCase,
+)
 from presentation.dependencies import (
     get_cancel_reservation_use_case,
     get_create_reservation_use_case,
+    get_get_reservation_use_case,
+    get_list_reservations_by_space_use_case,
 )
 from presentation.schemas.reservation import (
     ReservationCancelResponse,
@@ -19,6 +25,26 @@ from presentation.schemas.reservation import (
 )
 
 router = APIRouter(prefix="/reservations", tags=["reservations"])
+
+
+@router.get("/by-space/{space_id}", response_model=list[ReservationResponse])
+def list_reservations_by_space(
+    space_id: UUID,
+    use_case: ListReservationsBySpaceUseCase = Depends(
+        get_list_reservations_by_space_use_case
+    ),
+) -> list[ReservationResponse]:
+    output = use_case.execute(space_id)
+    return [ReservationResponse.model_validate(item) for item in output]
+
+
+@router.get("/{reservation_id}", response_model=ReservationResponse)
+def get_reservation(
+    reservation_id: UUID,
+    use_case: GetReservationUseCase = Depends(get_get_reservation_use_case),
+) -> ReservationResponse:
+    output = use_case.execute(reservation_id)
+    return ReservationResponse.model_validate(output)
 
 
 @router.post(

@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from presentation.exception_handlers import register_exception_handlers
+from presentation.routers.pricing import router as pricing_router
 from presentation.routers.reservations import router as reservations_router
 from presentation.routers.spaces import router as spaces_router
 
@@ -11,6 +12,7 @@ def create_app() -> FastAPI:
 
     app.include_router(spaces_router)
     app.include_router(reservations_router)
+    app.include_router(pricing_router)
 
     @app.get("/health", tags=["health"])
     def healthcheck() -> dict[str, str]:

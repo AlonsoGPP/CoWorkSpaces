@@ -4,7 +4,7 @@ from decimal import Decimal
 import pytest
 
 from domain.exceptions import ValidationError
-from domain.services.pricing_engine import PricingEngine
+from domain.services.pricing_engine import PricingEngine, PricingRuleName
 from domain.value_objects.reservation_window import ReservationWindow
 
 
@@ -122,3 +122,66 @@ def test_calculate_total_raises_when_base_rate_is_invalid() -> None:
             reservation_window=_window(start_at, 2),
             booked_at=booked_at,
         )
+
+
+def test_calculate_breakdown_includes_rules_in_required_order() -> None:
+    engine = PricingEngine()
+    start_at = datetime(2026, 6, 13, 10, 0, tzinfo=timezone.utc)
+    booked_at = datetime(2026, 6, 1, 9, 0, tzinfo=timezone.utc)
+
+    breakdown = engine.calculate_breakdown(
+        base_hourly_rate=Decimal("100"),
+        reservation_window=_window(start_at, 5),
+        booked_at=booked_at,
+    )
+
+    assert breakdown.applied_rules == (
+        PricingRuleName.HORA_PICO,
+        PricingRuleName.FIN_DE_SEMANA,
+        PricingRuleName.RESERVA_LARGA,
+        PricingRuleName.ANTICIPACION,
+    )
+    assert breakdown.base_subtotal == Decimal("500.00")
+    assert breakdown.total == Decimal("614.53")
+
+
+def test_peak_rule_not_applied_at_end_boundary_hour() -> None:
+    engine = PricingEngine()
+    start_at = datetime(2026, 6, 8, 18, 0, tzinfo=timezone.utc)
+    booked_at = datetime(2026, 6, 8, 10, 0, tzinfo=timezone.utc)
+
+    total = engine.calculate_total(
+        base_hourly_rate=Decimal("100"),
+        reservation_window=_window(start_at, 2),
+        booked_at=booked_at,
+    )
+
+    assert total == Decimal("200.00")
+
+
+def test_long_reservation_discount_applies_at_exact_threshold() -> None:
+    engine = PricingEngine()
+    start_at = datetime(2026, 6, 8, 20, 0, tzinfo=timezone.utc)
+    booked_at = datetime(2026, 6, 8, 10, 0, tzinfo=timezone.utc)
+
+    total = engine.calculate_total(
+        base_hourly_rate=Decimal("100"),
+        reservation_window=_window(start_at, 4),
+        booked_at=booked_at,
+    )
+
+    assert total == Decimal("360.00")
+
+
+def test_early_booking_discount_applies_at_exact_threshold() -> None:
+    engine = PricingEngine()
+    start_at = datetime(2026, 6, 15, 20, 0, tzinfo=timezone.utc)
+    booked_at = datetime(2026, 6, 8, 20, 0, tzinfo=timezone.utc)
+
+    total = engine.calculate_total(
+        base_hourly_rate=Decimal("100"),
+        reservation_window=_window(start_at, 2),
+        booked_at=booked_at,
+    )
+
+    assert total == Decimal("190.00")
