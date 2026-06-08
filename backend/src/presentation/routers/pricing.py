@@ -3,9 +3,14 @@ from fastapi import APIRouter, Depends
 from application.dto.pricing_dto import QuoteReservationPriceInputDTO
 from application.use_cases.quote_reservation_price import QuoteReservationPriceUseCase
 from presentation.dependencies import get_quote_reservation_price_use_case
+from presentation.openapi import DEFAULT_ERROR_RESPONSES
 from presentation.schemas.pricing import PricingQuoteRequest, PricingQuoteResponse
 
-router = APIRouter(prefix="/pricing", tags=["pricing"])
+router = APIRouter(
+    prefix="/pricing",
+    tags=["pricing"],
+    responses=DEFAULT_ERROR_RESPONSES,
+)
 
 
 @router.post("/quote", response_model=PricingQuoteResponse)

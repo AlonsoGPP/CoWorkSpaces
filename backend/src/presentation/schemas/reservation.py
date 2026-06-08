@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
 from domain.enums import ReservationStatus
+from domain.services.cancellation_policy import RefundTier
 
 
 class ReservationCreateRequest(BaseModel):
@@ -29,3 +30,16 @@ class ReservationResponse(BaseModel):
 class ReservationCancelResponse(BaseModel):
     reservation: ReservationResponse
     refund_amount: Decimal
+
+
+class ReservationCancellationQuoteResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    reservation_id: UUID
+    reservation_status: ReservationStatus
+    reservation_start_at: datetime
+    total_amount: Decimal
+    refund_amount: Decimal
+    refund_rate: Decimal
+    refund_tier: RefundTier
+    quoted_at: datetime
