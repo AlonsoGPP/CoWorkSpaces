@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from application.interfaces.reporting_repository import ReportingRepository
 from domain.repositories.reservation_repository import ReservationRepository
 from domain.repositories.space_repository import SpaceRepository
+from domain.repositories.user_repository import UserRepository
 from infrastructure.repositories.sqlalchemy_reporting_repository import (
     SqlAlchemyReportingRepository,
 )
@@ -14,6 +15,9 @@ from infrastructure.repositories.sqlalchemy_reservation_repository import (
 from infrastructure.repositories.sqlalchemy_space_repository import (
     SqlAlchemySpaceRepository,
 )
+from infrastructure.repositories.sqlalchemy_user_repository import (
+    SqlAlchemyUserRepository,
+)
 
 
 class SqlAlchemyUnitOfWork:
@@ -22,6 +26,7 @@ class SqlAlchemyUnitOfWork:
         self._session: Session | None = None
         self._space_repository: SqlAlchemySpaceRepository | None = None
         self._reservation_repository: SqlAlchemyReservationRepository | None = None
+        self._user_repository: SqlAlchemyUserRepository | None = None
         self._reporting_repository: SqlAlchemyReportingRepository | None = None
 
     @property
@@ -37,6 +42,12 @@ class SqlAlchemyUnitOfWork:
         return self._reservation_repository
 
     @property
+    def user_repository(self) -> UserRepository:
+        if self._user_repository is None:
+            raise RuntimeError("La unidad de trabajo no fue iniciada")
+        return self._user_repository
+
+    @property
     def reporting_repository(self) -> ReportingRepository:
         if self._reporting_repository is None:
             raise RuntimeError("La unidad de trabajo no fue iniciada")
@@ -46,6 +57,7 @@ class SqlAlchemyUnitOfWork:
         self._session = self._session_factory()
         self._space_repository = SqlAlchemySpaceRepository(self._session)
         self._reservation_repository = SqlAlchemyReservationRepository(self._session)
+        self._user_repository = SqlAlchemyUserRepository(self._session)
         self._reporting_repository = SqlAlchemyReportingRepository(self._session)
         return self
 
@@ -57,6 +69,7 @@ class SqlAlchemyUnitOfWork:
         self._session = None
         self._space_repository = None
         self._reservation_repository = None
+        self._user_repository = None
         self._reporting_repository = None
 
     def commit(self) -> None:

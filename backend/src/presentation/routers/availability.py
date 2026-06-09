@@ -22,7 +22,9 @@ router = APIRouter(
 def get_space_availability(
     space_id: UUID,
     query: SpaceAvailabilityQuery = Depends(),
-    use_case: GetSpaceAvailabilityUseCase = Depends(get_get_space_availability_use_case),
+    use_case: GetSpaceAvailabilityUseCase = Depends(
+        get_get_space_availability_use_case
+    ),
 ) -> SpaceAvailabilityResponse:
     output = use_case.execute(
         SpaceAvailabilityInputDTO(

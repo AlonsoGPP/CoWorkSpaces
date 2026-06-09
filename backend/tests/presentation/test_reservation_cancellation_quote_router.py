@@ -28,7 +28,7 @@ def _quote_output() -> QuoteReservationCancellationOutputDTO:
 
 
 def test_quote_cancellation_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     quote_output = _quote_output()
 
     class StubQuoteReservationCancellationUseCase:
@@ -53,7 +53,7 @@ def test_quote_cancellation_returns_ok() -> None:
 
 
 def test_quote_cancellation_returns_not_found() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubQuoteReservationCancellationUseCase:
         def execute(
@@ -73,7 +73,7 @@ def test_quote_cancellation_returns_not_found() -> None:
 
 
 def test_quote_cancellation_returns_conflict_when_completed() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubQuoteReservationCancellationUseCase:
         def execute(

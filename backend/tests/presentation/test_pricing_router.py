@@ -30,7 +30,7 @@ def _quote_output() -> QuoteReservationPriceOutputDTO:
 
 
 def test_quote_pricing_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     quote_output = _quote_output()
 
     class StubQuoteReservationPriceUseCase:
@@ -62,7 +62,7 @@ def test_quote_pricing_returns_ok() -> None:
 
 
 def test_quote_pricing_returns_conflict_for_maintenance_space() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubQuoteReservationPriceUseCase:
         def execute(self, input_dto: object) -> QuoteReservationPriceOutputDTO:

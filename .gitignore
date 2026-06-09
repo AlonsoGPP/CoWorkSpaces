@@ -1,4 +1,6 @@
-.github/
+.github/*
+!.github/workflows/
+!.github/workflows/**
 docs/
 PROJECT_RULES.MD
 .venv/
@@ -10,3 +12,4 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+/front

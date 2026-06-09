@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 from application.dto.availability_dto import (
     SpaceAvailabilityInputDTO,
@@ -13,7 +13,6 @@ from application.validators.report_range import validate_report_range
 from domain.enums import ReservationStatus
 from domain.exceptions import EntityNotFoundError
 
-
 _BLOCKING_STATUSES: frozenset[ReservationStatus] = frozenset(
     {ReservationStatus.PENDIENTE, ReservationStatus.CONFIRMADA}
 )
@@ -23,7 +22,9 @@ class GetSpaceAvailabilityUseCase:
     def __init__(self, unit_of_work: UnitOfWork) -> None:
         self._unit_of_work = unit_of_work
 
-    def execute(self, input_dto: SpaceAvailabilityInputDTO) -> SpaceAvailabilityOutputDTO:
+    def execute(
+        self, input_dto: SpaceAvailabilityInputDTO
+    ) -> SpaceAvailabilityOutputDTO:
         validate_report_range(start_at=input_dto.start_at, end_at=input_dto.end_at)
         validate_slot_minutes(input_dto.slot_minutes)
 

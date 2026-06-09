@@ -12,7 +12,7 @@ from presentation.dependencies import get_get_space_use_case
 
 
 def test_error_contract_for_not_found() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubGetSpaceUseCase:
         def execute(self, space_id: object) -> SpaceOutputDTO:
@@ -29,7 +29,7 @@ def test_error_contract_for_not_found() -> None:
 
 
 def test_error_contract_for_request_validation() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     client = TestClient(app)
 
     response = client.post(
@@ -49,7 +49,7 @@ def test_error_contract_for_request_validation() -> None:
 
 
 def test_error_contract_for_internal_server_error() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     debug_router = APIRouter()
 
     @debug_router.get("/_debug/boom")

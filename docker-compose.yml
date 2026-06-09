@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: cowork-postgres
+    environment:
+      POSTGRES_DB: cowork_reservations
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - cowork_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cowork_reservations"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cowork-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/cowork_reservations
+      CORS_ALLOW_ORIGINS: http://localhost:4200
+      JWT_SECRET_KEY: change-this-secret-in-production
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_TTL_SECONDS: 3600
+      JWT_ISSUER: cowork-reservations
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn main:app --app-dir src --host 0.0.0.0 --port 8000"
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: cowork-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  cowork_pgdata:

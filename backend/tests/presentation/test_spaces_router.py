@@ -29,7 +29,7 @@ def _space_output() -> SpaceOutputDTO:
 
 
 def test_list_spaces_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubListSpacesUseCase:
         def execute(self) -> list[SpaceOutputDTO]:
@@ -45,7 +45,7 @@ def test_list_spaces_returns_ok() -> None:
 
 
 def test_get_space_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     space_output = _space_output()
 
     class StubGetSpaceUseCase:
@@ -62,7 +62,7 @@ def test_get_space_returns_ok() -> None:
 
 
 def test_create_space_returns_created() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     space_output = _space_output()
 
     class StubCreateSpaceUseCase:
@@ -87,7 +87,7 @@ def test_create_space_returns_created() -> None:
 
 
 def test_update_space_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     space_output = _space_output()
 
     class StubUpdateSpaceUseCase:
@@ -112,7 +112,7 @@ def test_update_space_returns_ok() -> None:
 
 
 def test_update_space_returns_not_found() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubUpdateSpaceUseCase:
         def execute(self, input_dto: object) -> SpaceOutputDTO:
@@ -135,7 +135,7 @@ def test_update_space_returns_not_found() -> None:
 
 
 def test_delete_space_returns_no_content() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubDeleteSpaceUseCase:
         def execute(self, space_id: object) -> None:

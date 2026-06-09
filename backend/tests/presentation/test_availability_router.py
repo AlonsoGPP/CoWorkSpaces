@@ -56,7 +56,7 @@ def _availability_output() -> SpaceAvailabilityOutputDTO:
 
 
 def test_get_space_availability_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     output = _availability_output()
 
     class StubUseCase:
@@ -78,7 +78,7 @@ def test_get_space_availability_returns_ok() -> None:
 
 
 def test_get_space_availability_returns_not_found() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubUseCase:
         def execute(self, input_dto: object) -> SpaceAvailabilityOutputDTO:
@@ -95,7 +95,7 @@ def test_get_space_availability_returns_not_found() -> None:
 
 
 def test_get_space_availability_returns_422_on_invalid_slot_minutes() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     client = TestClient(app)
 
     response = client.get(

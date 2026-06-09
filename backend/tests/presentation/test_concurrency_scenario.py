@@ -46,7 +46,7 @@ class ConcurrentCreateReservationUseCase:
 
 
 def test_concurrent_requests_return_201_and_409() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     use_case = ConcurrentCreateReservationUseCase()
     app.dependency_overrides[get_create_reservation_use_case] = lambda: use_case
 

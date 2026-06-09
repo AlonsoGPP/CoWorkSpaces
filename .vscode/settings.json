@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /home/davidgarcia/Documentos/ProyectoTouch/Lugares/front && npm run build$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
