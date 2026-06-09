@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from presentation.exception_handlers import register_exception_handlers
+from presentation.routers.availability import router as availability_router
 from presentation.routers.pricing import router as pricing_router
 from presentation.routers.reports import router as reports_router
 from presentation.routers.reservations import router as reservations_router
@@ -29,6 +30,7 @@ def create_app() -> FastAPI:
 
     app.include_router(spaces_router)
     app.include_router(reservations_router)
+    app.include_router(availability_router)
     app.include_router(pricing_router)
     app.include_router(reports_router)
 

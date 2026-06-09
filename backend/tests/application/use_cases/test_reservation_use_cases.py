@@ -84,6 +84,21 @@ class FakeReservationRepository:
             if reservation.space_id == space_id
         ]
 
+    def list_by_space_in_range(
+        self,
+        space_id: UUID,
+        *,
+        start_at: datetime,
+        end_at: datetime,
+    ) -> list[Reservation]:
+        return [
+            reservation
+            for reservation in self._reservations.values()
+            if reservation.space_id == space_id
+            and reservation.reservation_window.start_at < end_at
+            and reservation.reservation_window.end_at > start_at
+        ]
+
     def update(self, reservation: Reservation) -> Reservation:
         self._reservations[reservation.id] = reservation
         return reservation

@@ -7,6 +7,7 @@ from application.use_cases.cancel_reservation import CancelReservationUseCase
 from application.use_cases.create_reservation import CreateReservationUseCase
 from application.use_cases.create_space import CreateSpaceUseCase
 from application.use_cases.delete_space import DeleteSpaceUseCase
+from application.use_cases.get_space_availability import GetSpaceAvailabilityUseCase
 from application.use_cases.get_occupancy_by_space_report import (
     GetOccupancyBySpaceReportUseCase,
 )
@@ -90,6 +91,10 @@ def get_get_reservation_use_case() -> GetReservationUseCase:
 
 def get_list_reservations_by_space_use_case() -> ListReservationsBySpaceUseCase:
     return ListReservationsBySpaceUseCase(get_unit_of_work())
+
+
+def get_get_space_availability_use_case() -> GetSpaceAvailabilityUseCase:
+    return GetSpaceAvailabilityUseCase(get_unit_of_work())
 
 
 def get_get_occupancy_by_space_report_use_case() -> GetOccupancyBySpaceReportUseCase:

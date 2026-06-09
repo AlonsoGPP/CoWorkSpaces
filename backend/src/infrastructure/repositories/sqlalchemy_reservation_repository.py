@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import select
@@ -42,6 +43,24 @@ class SqlAlchemyReservationRepository:
         rows = self._session.scalars(
             select(ReservationModel)
             .where(ReservationModel.space_id == space_id)
+            .order_by(ReservationModel.start_at)
+        ).all()
+        return [self._to_domain(row) for row in rows]
+
+    def list_by_space_in_range(
+        self,
+        space_id: UUID,
+        *,
+        start_at: datetime,
+        end_at: datetime,
+    ) -> list[Reservation]:
+        rows = self._session.scalars(
+            select(ReservationModel)
+            .where(
+                ReservationModel.space_id == space_id,
+                ReservationModel.start_at < end_at,
+                ReservationModel.end_at > start_at,
+            )
             .order_by(ReservationModel.start_at)
         ).all()
         return [self._to_domain(row) for row in rows]
