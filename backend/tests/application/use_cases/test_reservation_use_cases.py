@@ -14,6 +14,10 @@ from application.dto.reservation_dto import (
 )
 from application.use_cases.cancel_reservation import CancelReservationUseCase
 from application.use_cases.create_reservation import CreateReservationUseCase
+from application.use_cases.get_reservation import GetReservationUseCase
+from application.use_cases.list_reservations_by_space import (
+    ListReservationsBySpaceUseCase,
+)
 from domain.entities.reservation import Reservation
 from domain.entities.space import Space
 from domain.enums import ReservationStatus, SpaceStatus
@@ -52,6 +56,9 @@ class FakeSpaceRepository:
     def update(self, space: Space) -> Space:
         self._spaces[space.id] = space
         return space
+
+    def delete(self, space_id: UUID) -> None:
+        self._spaces.pop(space_id, None)
 
 
 class FakeReservationRepository:
@@ -258,3 +265,84 @@ def test_cancel_reservation_fails_when_not_found() -> None:
 
     with pytest.raises(EntityNotFoundError):
         use_case.execute(CancelReservationInputDTO(reservation_id=uuid4()))
+
+
+def test_get_reservation_happy_path() -> None:
+    space = _space()
+    reservation = Reservation.create(
+        space_id=space.id,
+        reservation_window=ReservationWindow(
+            start_at=datetime(2026, 6, 10, 10, 0, tzinfo=timezone.utc),
+            end_at=datetime(2026, 6, 10, 12, 0, tzinfo=timezone.utc),
+        ),
+        total_price=Decimal("200.00"),
+    )
+    use_case = GetReservationUseCase(
+        FakeUnitOfWork(
+            space_repository=FakeSpaceRepository([space]),
+            reservation_repository=FakeReservationRepository([reservation]),
+        )
+    )
+
+    output = use_case.execute(reservation.id)
+
+    assert output.id == reservation.id
+    assert output.space_id == space.id
+
+
+def test_get_reservation_fails_when_not_found() -> None:
+    use_case = GetReservationUseCase(
+        FakeUnitOfWork(
+            space_repository=FakeSpaceRepository(),
+            reservation_repository=FakeReservationRepository(),
+        )
+    )
+
+    with pytest.raises(EntityNotFoundError):
+        use_case.execute(uuid4())
+
+
+def test_list_reservations_by_space_happy_path() -> None:
+    space = _space()
+    other_space = _space()
+    reservation_a = Reservation.create(
+        space_id=space.id,
+        reservation_window=ReservationWindow(
+            start_at=datetime(2026, 6, 10, 10, 0, tzinfo=timezone.utc),
+            end_at=datetime(2026, 6, 10, 12, 0, tzinfo=timezone.utc),
+        ),
+        total_price=Decimal("200.00"),
+    )
+    reservation_b = Reservation.create(
+        space_id=other_space.id,
+        reservation_window=ReservationWindow(
+            start_at=datetime(2026, 6, 11, 10, 0, tzinfo=timezone.utc),
+            end_at=datetime(2026, 6, 11, 12, 0, tzinfo=timezone.utc),
+        ),
+        total_price=Decimal("200.00"),
+    )
+    use_case = ListReservationsBySpaceUseCase(
+        FakeUnitOfWork(
+            space_repository=FakeSpaceRepository([space, other_space]),
+            reservation_repository=FakeReservationRepository(
+                [reservation_a, reservation_b]
+            ),
+        )
+    )
+
+    output = use_case.execute(space.id)
+
+    assert len(output) == 1
+    assert output[0].id == reservation_a.id
+
+
+def test_list_reservations_by_space_fails_when_space_not_found() -> None:
+    use_case = ListReservationsBySpaceUseCase(
+        FakeUnitOfWork(
+            space_repository=FakeSpaceRepository(),
+            reservation_repository=FakeReservationRepository(),
+        )
+    )
+
+    with pytest.raises(EntityNotFoundError):
+        use_case.execute(uuid4())

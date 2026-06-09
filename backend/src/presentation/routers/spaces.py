@@ -15,13 +15,18 @@ from presentation.dependencies import (
     get_list_spaces_use_case,
     get_update_space_use_case,
 )
+from presentation.openapi import DEFAULT_ERROR_RESPONSES
 from presentation.schemas.space import (
     SpaceCreateRequest,
     SpaceResponse,
     SpaceUpdateRequest,
 )
 
-router = APIRouter(prefix="/spaces", tags=["spaces"])
+router = APIRouter(
+    prefix="/spaces",
+    tags=["spaces"],
+    responses=DEFAULT_ERROR_RESPONSES,
+)
 
 
 @router.get("", response_model=list[SpaceResponse])
