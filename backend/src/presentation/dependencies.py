@@ -6,8 +6,10 @@ from application.interfaces.clock import Clock
 from application.use_cases.cancel_reservation import CancelReservationUseCase
 from application.use_cases.create_reservation import CreateReservationUseCase
 from application.use_cases.create_space import CreateSpaceUseCase
+from application.use_cases.delete_space import DeleteSpaceUseCase
 from application.use_cases.get_space import GetSpaceUseCase
 from application.use_cases.list_spaces import ListSpacesUseCase
+from application.use_cases.update_space import UpdateSpaceUseCase
 from domain.services.cancellation_policy import CancellationPolicy
 from domain.services.pricing_engine import PricingEngine
 from infrastructure.clock import SystemClock
@@ -47,6 +49,14 @@ def get_list_spaces_use_case() -> ListSpacesUseCase:
 
 def get_get_space_use_case() -> GetSpaceUseCase:
     return GetSpaceUseCase(get_unit_of_work())
+
+
+def get_update_space_use_case() -> UpdateSpaceUseCase:
+    return UpdateSpaceUseCase(get_unit_of_work())
+
+
+def get_delete_space_use_case() -> DeleteSpaceUseCase:
+    return DeleteSpaceUseCase(get_unit_of_work())
 
 
 def get_create_reservation_use_case() -> CreateReservationUseCase:

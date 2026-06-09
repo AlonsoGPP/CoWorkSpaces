@@ -6,6 +6,7 @@ from domain.exceptions import (
     EntityNotFoundError,
     OverlappingReservationError,
     ReservationNotCancelableError,
+    SpaceDeletionConflictError,
     SpaceUnavailableError,
     ValidationError,
 )
@@ -37,6 +38,13 @@ def register_exception_handlers(app: FastAPI) -> None:
     async def handle_space_unavailable(
         request: Request,
         exc: SpaceUnavailableError,
+    ) -> JSONResponse:
+        return JSONResponse(status_code=409, content={"detail": str(exc)})
+
+    @app.exception_handler(SpaceDeletionConflictError)
+    async def handle_space_deletion_conflict(
+        request: Request,
+        exc: SpaceDeletionConflictError,
     ) -> JSONResponse:
         return JSONResponse(status_code=409, content={"detail": str(exc)})
 
