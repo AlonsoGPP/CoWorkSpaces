@@ -3,8 +3,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from domain.exceptions import (
+    AuthenticationError,
+    AuthorizationError,
     DomainError,
     EntityNotFoundError,
+    InvalidCredentialsError,
     OverlappingReservationError,
     ReservationNotCancelableError,
     SpaceDeletionConflictError,
@@ -33,6 +36,39 @@ def _build_error_response(
 
 
 def register_exception_handlers(app: FastAPI) -> None:
+    @app.exception_handler(InvalidCredentialsError)
+    async def handle_invalid_credentials(
+        request: Request,
+        exc: InvalidCredentialsError,
+    ) -> JSONResponse:
+        return _build_error_response(
+            status_code=401,
+            error_code="invalid_credentials",
+            message=str(exc),
+        )
+
+    @app.exception_handler(AuthenticationError)
+    async def handle_authentication_error(
+        request: Request,
+        exc: AuthenticationError,
+    ) -> JSONResponse:
+        return _build_error_response(
+            status_code=401,
+            error_code="authentication_error",
+            message=str(exc),
+        )
+
+    @app.exception_handler(AuthorizationError)
+    async def handle_authorization_error(
+        request: Request,
+        exc: AuthorizationError,
+    ) -> JSONResponse:
+        return _build_error_response(
+            status_code=403,
+            error_code="forbidden",
+            message=str(exc),
+        )
+
     @app.exception_handler(RequestValidationError)
     async def handle_request_validation_error(
         request: Request,

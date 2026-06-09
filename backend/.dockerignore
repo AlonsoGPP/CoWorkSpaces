@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+ENV/
+.git/
+.github/
+docs/
+tests/
+*.log
+*.sqlite3

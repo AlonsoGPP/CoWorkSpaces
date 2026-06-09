@@ -23,7 +23,7 @@ from presentation.dependencies import (
 
 
 def test_get_occupancy_by_space_report_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     output = OccupancyBySpaceReportOutputDTO(
         start_at=datetime(2026, 7, 1, 10, 0, tzinfo=timezone.utc),
         end_at=datetime(2026, 7, 1, 12, 0, tzinfo=timezone.utc),
@@ -55,7 +55,7 @@ def test_get_occupancy_by_space_report_returns_ok() -> None:
 
 
 def test_get_revenue_by_range_report_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     output = RevenueByRangeReportOutputDTO(
         start_at=datetime(2026, 7, 1, 10, 0, tzinfo=timezone.utc),
         end_at=datetime(2026, 7, 1, 12, 0, tzinfo=timezone.utc),
@@ -78,7 +78,7 @@ def test_get_revenue_by_range_report_returns_ok() -> None:
 
 
 def test_get_reservations_by_status_report_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     output = ReservationsByStatusReportOutputDTO(
         start_at=datetime(2026, 7, 1, 10, 0, tzinfo=timezone.utc),
         end_at=datetime(2026, 7, 1, 12, 0, tzinfo=timezone.utc),
@@ -109,7 +109,7 @@ def test_get_reservations_by_status_report_returns_ok() -> None:
 
 
 def test_reports_return_422_on_invalid_range() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     client = TestClient(app)
 
     response = client.get(

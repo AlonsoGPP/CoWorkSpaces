@@ -4,7 +4,7 @@ from presentation.api import create_app
 
 
 def test_openapi_includes_error_contract() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     client = TestClient(app)
 
     response = client.get("/openapi.json")

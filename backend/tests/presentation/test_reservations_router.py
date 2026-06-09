@@ -30,7 +30,7 @@ def _reservation_output() -> ReservationOutputDTO:
 
 
 def test_get_reservation_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     reservation_output = _reservation_output()
 
     class StubGetReservationUseCase:
@@ -47,7 +47,7 @@ def test_get_reservation_returns_ok() -> None:
 
 
 def test_get_reservation_returns_not_found() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubGetReservationUseCase:
         def execute(self, reservation_id: object) -> ReservationOutputDTO:
@@ -62,7 +62,7 @@ def test_get_reservation_returns_not_found() -> None:
 
 
 def test_list_reservations_by_space_returns_ok() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
     reservation_output = _reservation_output()
 
     class StubListReservationsBySpaceUseCase:
@@ -82,7 +82,7 @@ def test_list_reservations_by_space_returns_ok() -> None:
 
 
 def test_list_reservations_by_space_returns_not_found() -> None:
-    app = create_app()
+    app = create_app(enable_auth=False)
 
     class StubListReservationsBySpaceUseCase:
         def execute(self, space_id: object) -> list[ReservationOutputDTO]:

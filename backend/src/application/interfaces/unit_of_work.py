@@ -3,6 +3,7 @@ from typing import Protocol
 from application.interfaces.reporting_repository import ReportingRepository
 from domain.repositories.reservation_repository import ReservationRepository
 from domain.repositories.space_repository import SpaceRepository
+from domain.repositories.user_repository import UserRepository
 
 
 class UnitOfWork(Protocol):
@@ -11,6 +12,9 @@ class UnitOfWork(Protocol):
 
     @property
     def reservation_repository(self) -> ReservationRepository: ...
+
+    @property
+    def user_repository(self) -> UserRepository: ...
 
     @property
     def reporting_repository(self) -> ReportingRepository: ...

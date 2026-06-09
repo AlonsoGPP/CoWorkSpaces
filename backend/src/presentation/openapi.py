@@ -1,6 +1,14 @@
 from presentation.schemas.common import ErrorResponse
 
 DEFAULT_ERROR_RESPONSES = {
+    401: {
+        "description": "No autenticado o token invalido",
+        "model": ErrorResponse,
+    },
+    403: {
+        "description": "Acceso denegado",
+        "model": ErrorResponse,
+    },
     400: {
         "description": "Error de negocio o solicitud invalida",
         "model": ErrorResponse,
